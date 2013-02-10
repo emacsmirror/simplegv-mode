@@ -6,9 +6,9 @@
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
 ;; Version: 0.01
-;; Last-Updated: Sun Feb 10 12:57:45 2013 (-0500)
+;; Last-Updated: Sun Feb 10 17:17:43 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 2
+;;     Update #: 4
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
 ;; Doc URL: 
 ;; Keywords: extension, convinience
@@ -20,9 +20,10 @@
 ;; 
 ;; 
 ;; 
+;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
-;;; Change Log:
+;;; Change Log: empty
 ;; 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,7 +48,11 @@
 ;;; Code:
 
 
-
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; SimpleGV Mode hooks
+;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-mode-hook nil
   "simplegv-mode hook"
 )
@@ -55,7 +60,7 @@
 
 (defvar simplegv-mode-map
   (let ((simplegv-mode-map (make-keymap)))
-    (define-key simplegv-mode-map "somekey" 'somefunc)
+    ;;  (define-key simplegv-mode-map "somekey" 'somefunc)
     ;;
     ;;    CURRENTLY EMPTY   example above^^
     ;;
@@ -66,8 +71,10 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; JLSCircuitTester files have no set extension, Generally the mode will have to be ;;
-;; loaded manually, however, for convience, .jlt can be used for autoloading	    ;;
+;;
+;; JLSCircuitTester files have no set extension, Generally the mode will have to be 
+;; loaded manually, however, for convience, .jlt can be used for autoloading	    
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'auto-mode-alist '("\\.jlt\\'" . simplegv-mode))
 
@@ -76,6 +83,8 @@
 (defconst  simplegv-font-lock-keywords-1
       '(
 	;; keyword face
+	("^[ \t]*#> *InputSetLoader:" . font-lock-preprocessor-face)
+	("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face))
 	("BEGIN\\|GATE_DELAY\\|ELEMENT_DELAY\\|SIGNED\\|UNSIGNED\\|FIXED\\|INPUTS\\|OUTPUT_SET_TYPE\\|SHARED\\|MEMORY\\|FILE\\|DATA\\|NAMED_VALUE_LISTS\\|OUTPUTS\\|INCLUDE\\|EXCLUDE\\|REQUIRE\\|RANGE\\|ECORNERS\\|CORNERS\\|UNIQUERAND\\|WILDCARD\\|RANDOM" . font-lock-keyword-face)
 	;; comments
 	("#+.*" . font-lock-comment-face)
@@ -88,46 +97,82 @@
        )
       "Basic font-lock highlighting for simplegv mode"
 )
-	
-(defvar simplegv-tab-width 2)
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; Simplegv tab width.
+;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar simplegv-tab-width 2
+  "Tab width to be used for simplegv-mode: default is 2"
+)
+
+
+
 		  
 (defun simplegv-indent-line()
   "Indent current line according to simplegv format"
   (interactive)
-
   (save-excursion
     (beginning-of-line)
     (if (bobp)
 	(indent-line-to 0)
-      (let ((not-indented t) cur-indent)
-	(if (looking-at "^[ \t]*BEGIN") 
-	    (progn
-	      (indent-line-to 0)
-	      (setq cur-indent (+ (current-indentation) simplegv-tab-width))
-	      (forward-line 1)
-	      (if (looking-at "^[ \t]*\(INPUT\\|OUTPUT\)")
-		  (progn
-		  (indent-line-to cur-indent)
-		  (setq cur-indent (+ (current-indentation) simplegv-tab-width))
-		  (forward-line 1)
-		  
+      (if (looking-at "^[ \t]*\\(BEGIN\\|OUTPUT_SET_TYPE\\|NAMED_VALUE_LISTS\\)") 
+	  (indent-line-to 0)
+	(if (looking-at "^[ \t]*\\(OUTPUTS\\|INPUTS\\)") 
+	    (indent-line-to simplegv-tab-width)
+	  (let ((not-indented t) cur-indent)
+	    (save-excursion
+	      (while not-indented
+		(progn
+		  (forward-line (- 0 1))
+		  (if (looking-at "^[ \t]*\\(BEGIN\\|OUTPUT_SET_TYPE\\|NAMED_VALUE_LISTS\\|OUTPUTS\\|INPUTS\\)")
+		      (progn
+			(setq cur-indent (+ simplegv-tab-width (current-indentation)))
+			(setq not-indented nil)
+			)
+		    (if (bobp)
+			(progn
+			  (setq cur-indent 0)
+			  (setq not-indented nil)
+			  )
+		      )
+		    )
 		  )
 		)
 	      )
+	    ;; end of while
+	    (progn
+	      (indent-line-to cur-indent)
+	    )
+	    )
 	  )
 	)
       )
-)
-	  
-	      
-	  
-)
+    )
+  (if (looking-at "^[ \t]*$")
+      (end-of-line)
+    )
+  )
 
-(define-derived-mode simplegv-mode prog-mode
- "GV JLS"
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; simplegv-mode
+;; 
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-derived-mode simplegv-mode fundamental-mode
+ "GV JLT"
  (setq font-lock-defaults '(simplegv-font-lock-keywords-1))
+ (setq indent-line-function 'simplegv-indent-line)
 )
 
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Provide it!
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'simplegv-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
