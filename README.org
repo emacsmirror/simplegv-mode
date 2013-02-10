@@ -1,6 +1,8 @@
 * simplegv-mode
   An Emacs major mode for editing JLSCircuitTester files writting in the SimpleGV input set format
-  [[http://www.cis.gvsu.edu/~kurmasz/JLSCircuitTester/][JLSCircuitTester]]
+  [[http://www.cis.gvsu.edu/~kurmasz/JLSCircuitTester/][JLSCircuitTester can be found here]]
+** Screenshot
+   [[http://i.imgur.com/OnnsyKr.png]]
 ** Known Issues
 *** Autoloading   
    JLSCircuitTester test files do not have a explicit file extension, and as a results
