@@ -1,6 +1,14 @@
 * simplegv-mode
   An Emacs major mode for editing JLSCircuitTester files writting in the SimpleGV input set format
   [[http://www.cis.gvsu.edu/~kurmasz/JLSCircuitTester/][JLSCircuitTester]]
+** Known Issues
+*** Autoloading   
+   JLSCircuitTester test files do not have a explicit file extension, and as a results
+   simplegv-mode will not be autoloaded when opening any give test file.
+   
+   To fix this, simplegv-mode defines an autoload file extension of ".jlt"
+   If the test file you are opening does not have a .jlt extension you can manually 
+   start simplegv-mode with "M-x simplegv-mode"
 ** Current Features
    - Basic Syntax Highlighting
    - Auto-indentation
