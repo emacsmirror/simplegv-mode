@@ -85,7 +85,7 @@
 	;; keyword face
 	("^[ \t]*#> *InputSetLoader:" . font-lock-preprocessor-face)
 	("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face))
-	("BEGIN\\|GATE_DELAY\\|ELEMENT_DELAY\\|SIGNED\\|UNSIGNED\\|FIXED\\|INPUTS\\|OUTPUT_SET_TYPE\\|SHARED\\|MEMORY\\|FILE\\|DATA\\|NAMED_VALUE_LISTS\\|OUTPUTS\\|INCLUDE\\|EXCLUDE\\|REQUIRE\\|RANGE\\|ECORNERS\\|CORNERS\\|UNIQUERAND\\|WILDCARD\\|RANDOM" . font-lock-keyword-face)
+	("\\<BEGIN\\>\\|\\<GATE_DELAY\\>\\|\\<ELEMENT_DELAY\\>\\|\\<SIGNED\\|\\<UNSIGNED\\|\\<FIXED\\|\\<INPUTS\\>\\|\\<OUTPUT_SET_TYPE\\>\\|\\<SHARED\\>\\|\\<MEMORY\\>\\|\\<FILE\\>\\|\\<DATA\\>\\|\\<NAMED_VALUE_LISTS\\>\\|\\<OUTPUTS\\>\\|\\<INCLUDE\\>\\|\\<EXCLUDE\\>\\|\\<REQUIRE\\>\\|\\<RANGE\\>\\|\\<ECORNERS\\>\\|\\<CORNERS\\>\\|\\<UNIQUERAND\\>\\|\\<WILDCARD\\>\\|\\<RANDOM\\>" . font-lock-keyword-face)
 	;; comments
 	("#+.*" . font-lock-comment-face)
 	;; test names aka function name
