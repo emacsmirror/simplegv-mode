@@ -1,0 +1,18 @@
+* simplegv-mode
+  An Emacs major mode for editing JLSCircuitTester files writting in the SimpleGV input set format
+  [[http://www.cis.gvsu.edu/~kurmasz/JLSCircuitTester/][JLSCircuitTester]]
+** Current Features
+   - Basic Syntax Highlighting
+   - Auto-indentation
+** Future Plans
+   - Complete Syntax Highlighting
+   - Fly-make support
+   - Running a test in Emacs
+   - Parse, highlight, and display results in another buffer   
+   - Auto-complete dictionary
+** Installing
+   To install simplegv-mode to Emacs, add the following to your ~/.emacs file:
+   #+BEGIN_SRC emacs-lisp
+   (add-to-list 'load-path "path/to/directory/containing/simplegv-mode.el")
+   (require 'simplegv-mode)
+   #+END_SRC
