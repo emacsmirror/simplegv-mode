@@ -6,25 +6,13 @@
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
 ;; Version: 0.01
-;; Last-Updated: Sun Feb 10 23:22:30 2013 (-0500)
+;; Last-Updated: Mon Feb 11 14:22:36 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 6
+;;     Update #: 8
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
 ;; Doc URL:
 ;; Keywords: extension, convinience
 ;; Compatibility: Tested on Emacs 24
-;; 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Commentary:
-;; 
-;; 
-;; 
-;; 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;;; Change Log: empty
-;; 
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
@@ -45,87 +33,79 @@
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
+
+;;; Commentary:
+;; 
+
 ;;; Code:
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; SimpleGV Mode hooks
-;;
+;; Mode hook
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-mode-hook nil
-  "Simplegv-mode hook.")
+  "Hook for `simplegv-mode'.")
 
-
-
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mode keymap
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-mode-map
   (let ((simplegv-mode-map (make-keymap)))
-    ;;  (define-key simplegv-mode-map "somekey" 'somefunc)
-    ;;
-    ;;    CURRENTLY EMPTY   example above^^
-    ;;
+    ;;(define-key simplegv-mode-map "somekey" 'somefunc)
     simplegv-mode-map)
-  "Key map for simplegv major mode.")
+  "Key map for `simplegv-mode'.")
 
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; JLSCircuitTester files have no set extension, Generally the mode will have to be
-;; loaded manually, however, for convience, .jlt can be used for autoloading
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'auto-mode-alist '("\\.jlt\\'" . simplegv-mode))
 
 
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Keyword type lists
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar simplegv-keywords
+  '("BEGIN" "GATE_DELAY" "ELEMENT_DELAY" "INPUTS" "OUTPUT_SET_TYPE" "SHARED"
+    "MEMORY" "FILE" "DATA" "NAMED_VALUE_LISTS" "OUTPUTS")
+  "Keywords for `simplegv-mode'.")
+(defvar simplegv-constants
+  '("EXCLUDE" "INCLUDE" "REQUIRE")
+  "Constant keywords for `simplegv-mode'.")
+(defvar simplegv-types
+  '("SIGNED" "UNSIGNED" "FIXED")
+  "Type keywords for `simplegv-mode'.")
+(defvar simplegv-builtins
+  '("RANDOM" "RANGE" "CORNERS" "ECORNERS" "WILDCARD" "UNIQUERANDOM")
+  "Builtin function keywords for `simplegv-mode'.")
 
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Font lock keywords
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defconst  simplegv-font-lock-keywords-1
-      '(
-	;; input set loader declaration uses the preprocessor face
-	("^[ \t]*#> *InputSetLoader:" . font-lock-preprocessor-face)
-	;; the actualy input set uses the constant face
-	("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face))
-	;; include, exclude, and require are constants
-	("\\<\\(INCLUDE\\|EXCLUDE\\|REQUIRE\\)\\>" . font-lock-constant-face)
-	;; Keywords
-	("\\<BEGIN\\>\\|\\<GATE_DELAY\\>\\|\\<ELEMENT_DELAY\\>\\|\\<INPUTS\\>\\|\\<OUTPUT_SET_TYPE\\>\\|\\<SHARED\\>\\|\\<MEMORY\\>\\|\\<FILE\\>\\|\\<DATA\\>\\|\\<NAMED_VALUE_LISTS\\>\\|\\<OUTPUTS\\>" . font-lock-keyword-face)
-	
-	;; comment face
-	("#+.*" . font-lock-comment-face)
-	;; Test names = function name face
-	("\\<BEGIN *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-function-name-face))
-	;; value lists doesn't work
-	;; BROKEN 
-	;;("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face))
-
-	;; output set type uses type face
-	("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face))
-	;; signed, unsigned, fixed are types
-	("\\<\\(SIGNED\\|UNSIGNED\\|FIXED\\)" . font-lock-type-face )
-	;; programmed value lists use builtin face
-        ("\\<\\(RANDOM\\|RANGE\\|CORNERS\\|ECORNERS\\|WILDCARD\\|UNIQUERANDOM\\)\\((\\)" 1 font-lock-builtin-face t))
+  `((,(regexp-opt simplegv-constants 'words)  . font-lock-constant-face);; constants
+    (,(regexp-opt simplegv-types 'words)      . font-lock-type-face);; types
+    (,(regexp-opt simplegv-keywords 'words)   . font-lock-keyword-face);; keywords
+    (,(concat (regexp-opt simplegv-builtins 'words) "\\((\\)") 1 font-lock-builtin-face t);; builtin
+    ("^[ \t]*#> *InputSetLoader:" . font-lock-preprocessor-face);; set loader preprocessor
+    ("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face));; set loader name
+    ("#+.*" . font-lock-comment-face);; comment
+    ("\\<BEGIN *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-function-name-face));; tests
+    ("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face));; output set type
+    ;;("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face)) broken
+    )
       "Basic font-lock highlighting for simplegv mode.")
 
 
-
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
 ;; Simplegv tab width.
-;;
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-tab-width 2
   "Tab width to be used for simplegv-mode: default is 2.")
 
-
-
-
 		  
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
 ;; simplegv-indent-line
 ;; Indents lines according to simplegv format
-;;
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun simplegv-indent-line()
   "Indent current line according to simplegv format"
@@ -181,44 +161,7 @@
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;; auto-complete mode keyword list
-;;
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar simplegv-ac-keyword-list
-  '("BEGIN" "GATE_DELAY" "ELEMENT_DELAY" "SIGNED" "UNSIGNED" "FIXED" "INPUTS" "OUTPUT_SET_TYPE" "SHARED" "MEMORY" "FILE" "DATA" "NAMED_VALUE_LISTS" "OUTPUTS" "INCLUDE" "EXCLUDE" "REQUIRE" "RANGE" "ECORNERS" "CORNERS" "UNIQUERAND" "WILDCARD" "RANDOM"))
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;; simplegv auto-complete source function
-;;
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun ac-simplegv-candidates(prefix) 
-  "Candidates for simplegv auto-completion"
-  (let ((candidates '() ))
-    (loop for key in simplegv-ac-keyword-list do
-	    (if ( eq 0 (string-match prefix key))
-		(push key candidates)))
-    candidates))
-
-
-
-(ac-define-source simplegv 
-  '((available . (require 'simplegv-mode nil t)) 
-    (candidates . (ac-simplegv-candidates ac-prefix))
-    (requires . 1)))
-
-
-
-
-
-
-
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 
-;; simplegv-mode
-;; 
+;; Mode definition
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-derived-mode simplegv-mode fundamental-mode
  "GV JLT"
@@ -226,12 +169,68 @@
  (setq indent-line-function 'simplegv-indent-line))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; JLSCircuitTester files have no set extension, Generally the mode will have to be
+;; loaded manually, however, for convience, .jlt can be used for autoloading
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'auto-mode-alist '("\\.jlt\\'" . simplegv-mode))
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Provide it!
+;; Initialize simplegv autocompletions
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun simplegv-init-ac()
+  "Initializes autocompletion support for `simplegv-mode' if autocomplete is available"
+  (interactive)
+  (if (fboundp 'auto-complete-mode)
+      (progn
+	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; auto-complete keyword list
+	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	(defvar simplegv-ac-keyword-list
+	  (append simplegv-keywords
+		  (append simplegv-constants
+			  (append simplegv-types simplegv-builtins)))
+	  "Complete list of keywords for auto-completion.")
+	
+	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; simplegv auto-complete candidates
+	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	(defun ac-simplegv-candidates(prefix)
+	  "Candidates for simplegv auto-completion"
+	  (let ((candidates '() ))
+	    (loop for key in simplegv-ac-keyword-list do
+		  (if ( eq 0 (string-match prefix key))
+		      (push key candidates)))
+	    candidates))
+	
+	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Autocomplete source
+	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	(ac-define-source simplegv
+	  '((available . (require 'simplegv-mode nil t))
+	    (candidates . (ac-simplegv-candidates ac-prefix))
+	    (requires . 0)))
+	;; add mode hook to set ac to use simplegv source
+	(add-hook 'simplegv-mode-hook
+		  (lambda () (add-to-list 'ac-sources 'ac-source-simplegv)))
+	(add-to-list 'ac-sources 'ac-source-simplegv))
+    (message "Failed to start simplegv-autocomplete. Auto complete mode not found.")))
+
+
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; On mode start, initialize ac source and turn
+;; on `auto-complete-mode' if possible.
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'simplegv-mode-hook
+	  (lambda ()
+	    (progn
+	      (simplegv-init-ac)
+	      (if (fboundp 'auto-complete-mode) (auto-complete-mode)))))
+
+	  
 (provide 'simplegv-mode)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; simplegv-mode.el ends here
