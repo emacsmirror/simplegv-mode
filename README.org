@@ -28,7 +28,7 @@
    If you'd like to use a differnet file extensions add this to your ~/.emacs
 #+BEGIN_SRC lisp
    (add-to-list 'auto-mode-alist '("\\.YOURFILEEXTENSION\\'" . simplegv-mode))
-#END_SRC
+#+END_SRC
    If the test file you are opening does not have a .jlt extension you can 
    manually start simplegv-mode with "M-x simplegv-mode".
 
