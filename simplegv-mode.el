@@ -1,4 +1,4 @@
-;;; simplegv-mode.el --- 
+;;; simplegv-mode.el --- editing mode of JLSCircuitTester files
 ;; 
 ;; Filename: simplegv-mode.el
 ;; Description: Emacs mode for editing JLSCircuitTester files in the SimpleGV input set format
@@ -6,17 +6,17 @@
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
 ;; Version: 0.01
-;; Last-Updated: Sun Feb 10 17:17:43 2013 (-0500)
+;; Last-Updated: Sun Feb 10 23:22:30 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 4
+;;     Update #: 6
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
-;; Doc URL: 
+;; Doc URL:
 ;; Keywords: extension, convinience
 ;; Compatibility: Tested on Emacs 24
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
-;;; Commentary: 
+;;; Commentary:
 ;; 
 ;; 
 ;; 
@@ -54,8 +54,8 @@
 ;;
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-mode-hook nil
-  "simplegv-mode hook"
-)
+  "Simplegv-mode hook.")
+
 
 
 (defvar simplegv-mode-map
@@ -65,15 +65,15 @@
     ;;    CURRENTLY EMPTY   example above^^
     ;;
     simplegv-mode-map)
-  "Key map for simplegv major mode"
-)
+  "Key map for simplegv major mode.")
+
 
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; JLSCircuitTester files have no set extension, Generally the mode will have to be 
-;; loaded manually, however, for convience, .jlt can be used for autoloading	    
+;; JLSCircuitTester files have no set extension, Generally the mode will have to be
+;; loaded manually, however, for convience, .jlt can be used for autoloading
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'auto-mode-alist '("\\.jlt\\'" . simplegv-mode))
@@ -95,8 +95,8 @@
 	;; output set type
 	("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face))
        )
-      "Basic font-lock highlighting for simplegv mode"
-)
+      "Basic font-lock highlighting for simplegv mode.")
+
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,55 +105,61 @@
 ;;
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-tab-width 2
-  "Tab width to be used for simplegv-mode: default is 2"
-)
+  "Tab width to be used for simplegv-mode: default is 2.")
+
 
 
 
 		  
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; simplegv-indent-line
+;; Indents lines according to simplegv format
+;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun simplegv-indent-line()
   "Indent current line according to simplegv format"
   (interactive)
   (save-excursion
     (beginning-of-line)
+    ;; if at the beginning of the buffer, indent is simply 0
     (if (bobp)
 	(indent-line-to 0)
-      (if (looking-at "^[ \t]*\\(BEGIN\\|OUTPUT_SET_TYPE\\|NAMED_VALUE_LISTS\\)") 
+      ;;  these keywords will always have a indent level of 0
+      (if (looking-at "^[ \t]*\\(BEGIN\\|OUTPUT_SET_TYPE\\|NAMED_VALUE_LISTS\\)")
 	  (indent-line-to 0)
-	(if (looking-at "^[ \t]*\\(OUTPUTS\\|INPUTS\\)") 
+	;; outputs and inputs are indented one level from a begin: 0 + 1 = 1
+	(if (looking-at "^[ \t]*\\(OUTPUTS\\|INPUTS\\)")
 	    (indent-line-to simplegv-tab-width)
+	  ;;if the we're not at a keyword line, move backward until we see one
 	  (let ((not-indented t) cur-indent)
 	    (save-excursion
 	      (while not-indented
 		(progn
 		  (forward-line (- 0 1))
+		  ;; when we see a keyword line, set the indentation level
+		  ;; to one more than the line we found
 		  (if (looking-at "^[ \t]*\\(BEGIN\\|OUTPUT_SET_TYPE\\|NAMED_VALUE_LISTS\\|OUTPUTS\\|INPUTS\\)")
 		      (progn
 			(setq cur-indent (+ simplegv-tab-width (current-indentation)))
-			(setq not-indented nil)
-			)
+			(setq not-indented nil))
+		    ;; if we hit the top, stop, and use indent level of 0
 		    (if (bobp)
 			(progn
 			  (setq cur-indent 0)
-			  (setq not-indented nil)
-			  )
-		      )
-		    )
-		  )
-		)
-	      )
+			  (setq not-indented nil)))))))
 	    ;; end of while
+	    ;; set the indent level to the result of the loop
 	    (progn
-	      (indent-line-to cur-indent)
-	    )
-	    )
-	  )
-	)
-      )
-    )
-  ;; if indenting new line, move forward to new indentation level
+	      (indent-line-to cur-indent)))))))
+  ;; if indenting new line, move forward to the new indentation level
   (if (looking-at "^[ \t]*$")
       (end-of-line)
+    ;; if indentation is called anywhere else on a line
+    ;; if the point is between the first character and the end of the line,
+    ;; keep the cursor where it was after indentation.
+    ;; if the cursor was somewhere before the first non whitespace character,
+    ;; move the cursor the to first character in the line
     (let ((cur-pos (point)) was-before-first-char)
       (progn
 	(save-excursion
@@ -161,8 +167,9 @@
 	  (if (> (point) cur-pos)
 	      (setq was-before-first-char t))
 	  (if was-before-first-char
-	      (back-to-indentation))))))
-  )
+	      (back-to-indentation)))))))
+
+
 
 
 
@@ -174,8 +181,8 @@
 (define-derived-mode simplegv-mode fundamental-mode
  "GV JLT"
  (setq font-lock-defaults '(simplegv-font-lock-keywords-1))
- (setq indent-line-function 'simplegv-indent-line)
-)
+ (setq indent-line-function 'simplegv-indent-line))
+
 
 
 
