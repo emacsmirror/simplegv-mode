@@ -151,10 +151,19 @@
 	)
       )
     )
+  ;; if indenting new line, move forward to new indentation level
   (if (looking-at "^[ \t]*$")
       (end-of-line)
-    )
+    (let ((cur-pos (point)) was-before-first-char)
+      (progn
+	(save-excursion
+	  (back-to-indentation)
+	  (if (> (point) cur-pos)
+	      (setq was-before-first-char t))
+	  (if was-before-first-char
+	      (back-to-indentation))))))
   )
+
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
