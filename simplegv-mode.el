@@ -6,9 +6,9 @@
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
 ;; Version: 0.01
-;; Last-Updated: Mon Feb 11 14:22:36 2013 (-0500)
+;; Last-Updated: Mon Feb 11 15:32:49 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 8
+;;     Update #: 9
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
 ;; Doc URL:
 ;; Keywords: extension, convinience
