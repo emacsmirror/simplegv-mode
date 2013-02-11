@@ -82,19 +82,29 @@
 
 (defconst  simplegv-font-lock-keywords-1
       '(
-	;; keyword face
+	;; input set loader declaration uses the preprocessor face
 	("^[ \t]*#> *InputSetLoader:" . font-lock-preprocessor-face)
+	;; the actualy input set uses the constant face
 	("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face))
-	("\\<BEGIN\\>\\|\\<GATE_DELAY\\>\\|\\<ELEMENT_DELAY\\>\\|\\<SIGNED\\|\\<UNSIGNED\\|\\<FIXED\\|\\<INPUTS\\>\\|\\<OUTPUT_SET_TYPE\\>\\|\\<SHARED\\>\\|\\<MEMORY\\>\\|\\<FILE\\>\\|\\<DATA\\>\\|\\<NAMED_VALUE_LISTS\\>\\|\\<OUTPUTS\\>\\|\\<INCLUDE\\>\\|\\<EXCLUDE\\>\\|\\<REQUIRE\\>\\|\\<RANGE\\>\\|\\<ECORNERS\\>\\|\\<CORNERS\\>\\|\\<UNIQUERAND\\>\\|\\<WILDCARD\\>\\|\\<RANDOM\\>" . font-lock-keyword-face)
-	;; comments
+	;; include, exclude, and require are constants
+	("\\<\\(INCLUDE\\|EXCLUDE\\|REQUIRE\\)\\>" . font-lock-constant-face)
+	;; Keywords
+	("\\<BEGIN\\>\\|\\<GATE_DELAY\\>\\|\\<ELEMENT_DELAY\\>\\|\\<INPUTS\\>\\|\\<OUTPUT_SET_TYPE\\>\\|\\<SHARED\\>\\|\\<MEMORY\\>\\|\\<FILE\\>\\|\\<DATA\\>\\|\\<NAMED_VALUE_LISTS\\>\\|\\<OUTPUTS\\>" . font-lock-keyword-face)
+	
+	;; comment face
 	("#+.*" . font-lock-comment-face)
-	;; test names aka function name
+	;; Test names = function name face
 	("\\<BEGIN *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-function-name-face))
-	;; value lists
-	("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face))
-	;; output set type
+	;; value lists doesn't work
+	;; BROKEN 
+	;;("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face))
+
+	;; output set type uses type face
 	("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face))
-       )
+	;; signed, unsigned, fixed are types
+	("\\<\\(SIGNED\\|UNSIGNED\\|FIXED\\)" . font-lock-type-face )
+	;; programmed value lists use builtin face
+        ("\\<\\(RANDOM\\|RANGE\\|CORNERS\\|ECORNERS\\|WILDCARD\\|UNIQUERANDOM\\)\\((\\)" 1 font-lock-builtin-face t))
       "Basic font-lock highlighting for simplegv mode.")
 
 
@@ -168,6 +178,38 @@
 	      (setq was-before-first-char t))
 	  (if was-before-first-char
 	      (back-to-indentation)))))))
+
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; auto-complete mode keyword list
+;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar simplegv-ac-keyword-list
+  '("BEGIN" "GATE_DELAY" "ELEMENT_DELAY" "SIGNED" "UNSIGNED" "FIXED" "INPUTS" "OUTPUT_SET_TYPE" "SHARED" "MEMORY" "FILE" "DATA" "NAMED_VALUE_LISTS" "OUTPUTS" "INCLUDE" "EXCLUDE" "REQUIRE" "RANGE" "ECORNERS" "CORNERS" "UNIQUERAND" "WILDCARD" "RANDOM"))
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; simplegv auto-complete source function
+;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun ac-simplegv-candidates(prefix) 
+  "Candidates for simplegv auto-completion"
+  (let ((candidates '() ))
+    (loop for key in simplegv-ac-keyword-list do
+	    (if ( eq 0 (string-match prefix key))
+		(push key candidates)))
+    candidates))
+
+
+
+(ac-define-source simplegv 
+  '((available . (require 'simplegv-mode nil t)) 
+    (candidates . (ac-simplegv-candidates ac-prefix))
+    (requires . 1)))
+
+
+
 
 
 
