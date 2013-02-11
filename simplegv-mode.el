@@ -175,9 +175,9 @@
 	(save-excursion
 	  (back-to-indentation)
 	  (if (> (point) cur-pos)
-	      (setq was-before-first-char t))
+	      (setq was-before-first-char t)))
 	  (if was-before-first-char
-	      (back-to-indentation)))))))
+	      (back-to-indentation))))))
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
