@@ -5,10 +5,10 @@
 ;; Author: Jordon Biondo
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
-;; Version: 0.01
-;; Last-Updated: Mon Feb 11 16:44:17 2013 (-0500)
+;; Version: 0.1.1
+;; Last-Updated: Tue Feb 12 13:01:25 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 10
+;;     Update #: 11
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
 ;; Doc URL:
 ;; Keywords: extension, convinience
@@ -86,10 +86,11 @@
     (,(regexp-opt simplegv-types 'words)      . font-lock-type-face);; types
     (,(regexp-opt simplegv-keywords 'words)   . font-lock-keyword-face);; keywords
     (,(concat (regexp-opt simplegv-builtins 'words) "\\((\\)") 1 font-lock-builtin-face t);; builtin
-    ("^[ \t]*#> *InputSetLoader:" . font-lock-preprocessor-face);; set loader preprocessor
-    ("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face));; set loader name
+    ("^[ \t]*#> *InputSetLoader:" 0 font-lock-preprocessor-face t);; set loader preprocessor
+    ("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face t));; set loader name
     ("\\<BEGIN *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-function-name-face));; tests
     ("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face));; output set type
+    ("someNumbers\\|moreNumbers" . font-lock-variable-name-face)
     ;;("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face)) broken
     )
       "Basic font-lock highlighting for simplegv mode.")
