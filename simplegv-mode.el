@@ -5,10 +5,10 @@
 ;; Author: Jordon Biondo
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
-;; Version: 0.1.1
-;; Last-Updated: Tue Feb 12 13:01:25 2013 (-0500)
+;; Version: 0.1.2
+;; Last-Updated: Tue Feb 12 17:57:00 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 11
+;;     Update #: 12
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
 ;; Doc URL:
 ;; Keywords: extension, convinience
@@ -38,13 +38,12 @@
 ;; 
 
 ;;; Code:
-
-
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode hook
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar simplegv-mode-hook nil
   "Hook for `simplegv-mode'.")
+
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode keymap
@@ -54,10 +53,6 @@
     ;;(define-key simplegv-mode-map "somekey" 'somefunc)
     simplegv-mode-map)
   "Key map for `simplegv-mode'.")
-
-
-
-
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -90,7 +85,7 @@
     ("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face t));; set loader name
     ("\\<BEGIN *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-function-name-face));; tests
     ("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face));; output set type
-    ("someNumbers\\|moreNumbers" . font-lock-variable-name-face)
+    ;;("someNumbers\\|moreNumbers" . font-lock-variable-name-face)
     ;;("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face)) broken
     )
       "Basic font-lock highlighting for simplegv mode.")
@@ -99,7 +94,7 @@
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simplegv tab width.
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar simplegv-tab-width 2
+(defvar simplegv-tab-width 4
   "Tab width to be used for simplegv-mode: default is 2.")
 
 		  
@@ -156,10 +151,8 @@
 	  (back-to-indentation)
 	  (if (> (point) cur-pos)
 	      (setq was-before-first-char t)))
-	  (if was-before-first-char
-	      (back-to-indentation))))))
-
-
+	(if was-before-first-char
+	    (back-to-indentation))))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simplegv syntax table
@@ -170,6 +163,7 @@
     (modify-syntax-entry ?\n "> b" table)
     table)
   "Syntax table for `simplegv-mode'.")
+
  
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mode definition
@@ -182,7 +176,6 @@
  (setq comment-end "")
  (setq font-lock-defaults '(simplegv-font-lock-keywords-1))
  (setq indent-line-function 'simplegv-indent-line))
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -226,14 +219,13 @@
 	(ac-define-source simplegv
 	  '((available . (require 'simplegv-mode nil t))
 	    (candidates . (ac-simplegv-candidates ac-prefix))
+	    (symbol . "f")
 	    (requires . 0)))
 	;; add mode hook to set ac to use simplegv source
 	(add-hook 'simplegv-mode-hook
 		  (lambda () (add-to-list 'ac-sources 'ac-source-simplegv)))
 	(add-to-list 'ac-sources 'ac-source-simplegv))
     (message "Failed to start simplegv-autocomplete. Auto complete mode not found.")))
-
-
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -246,7 +238,7 @@
 	      (simplegv-init-ac)
 	      (if (fboundp 'auto-complete-mode) (auto-complete-mode)))))
 
-	  
+
 (provide 'simplegv-mode)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; simplegv-mode.el ends here
