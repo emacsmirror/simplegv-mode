@@ -83,7 +83,7 @@
     (,(concat (regexp-opt simplegv-builtins 'words) "\\((\\)") 1 font-lock-builtin-face t);; builtin
     ("^[ \t]*#> *InputSetLoader:" 0 font-lock-preprocessor-face t);; set loader preprocessor
     ("^#> *InputSetLoader: *" "[a-zA-Z_]+\\.[a-zA-Z_]+" nil nil ( 0 font-lock-constant-face t));; set loader name
-    ("\\<BEGIN *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-function-name-face));; tests
+    ("\\<BEGIN *" "\\<[a-zA-Z_0-9]+\\>" nil nil (0 font-lock-function-name-face));; tests
     ("\\<OUTPUT_SET_TYPE  *\\(SHARED \\)? *" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-type-face));; output set type
     ;;("someNumbers\\|moreNumbers" . font-lock-variable-name-face)
     ;;("NAMED_VALUE_LISTS *\n.*" "\\<[a-zA-Z_]+\\>" nil nil (0 font-lock-variable-name-face)) broken
@@ -94,7 +94,7 @@
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Simplegv tab width.
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defvar simplegv-tab-width 4
+(defvar simplegv-tab-width 3
   "Tab width to be used for simplegv-mode: default is 2.")
 
 		  
@@ -102,6 +102,45 @@
 ;; simplegv-indent-line
 ;; Indents lines according to simplegv format
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun new-simplegv-indent-line() 
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (if (bobp)
+	(indent-line-to 0)
+      (progn
+	(back-to-indentation)
+	(if (looking-at "\\(BEGIN\\|OUTPUT_SET_TYPE\\|NAMED_VALUE_LISTS\\)")
+	    (indent-line-to 0)
+	  (let ((found-base nil) new-indent)
+	    (save-excursion
+	      (while (not found-base)
+		(progn
+		  (forward-line -1)
+		  (back-to-indentation)
+		  (cond 
+		   ((looking-at (regexp-opt simplegv-keywords)) 		    
+		    (progn
+		      (setq new-indent (+ simplegv-tab-width  (current-indentation)))
+		      (setq found-base t)))
+		   ((bobp)
+		    (progn
+		      (setq new-indent 0)
+		      (setq found-base t)))
+		   ) ;; end cond
+		  )
+		)
+	      )
+	    (indent-line-to new-indent)
+	    )
+	  )
+	)
+      )
+    )
+  )
+	
+
 (defun simplegv-indent-line()
   "Indent current line according to simplegv format"
   (interactive)
