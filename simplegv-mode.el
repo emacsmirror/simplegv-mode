@@ -6,9 +6,9 @@
 ;; Maintainer: Jordon Biondo biondoj@mail.gvsu.edu
 ;; Created: Sun Feb 10 12:54:49 2013 (-0500)
 ;; Version: 0.1.2
-;; Last-Updated: Tue Feb 12 17:57:00 2013 (-0500)
+;; Last-Updated: Sat Feb 16 10:09:44 2013 (-0500)
 ;;           By: Jordon Biondo
-;;     Update #: 12
+;;     Update #: 13
 ;; URL: www.github.com/jordonbiondo/simplegv-mode
 ;; Doc URL:
 ;; Keywords: extension, convinience
@@ -99,11 +99,12 @@
 
 		  
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; simplegv-indent-line
+;; new-simplegv-indent-line
+;; prototype for new indentation scheme
 ;; Indents lines according to simplegv format
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defun new-simplegv-indent-line() 
+  "Indent current line according to simplegv format"
   (interactive)
   (save-excursion
     (beginning-of-line)
@@ -140,7 +141,10 @@
     )
   )
 	
-
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; new-simplegv-indent-line
+;; Indents lines according to simplegv format
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun simplegv-indent-line()
   "Indent current line according to simplegv format"
   (interactive)
