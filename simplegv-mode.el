@@ -128,19 +128,10 @@
 		   ((bobp)
 		    (progn
 		      (setq new-indent 0)
-		      (setq found-base t)))
-		   ) ;; end cond
-		  )
-		)
-	      )
-	    (indent-line-to new-indent)
-	    )
-	  )
-	)
-      )
-    )
-  )
-	
+		      (setq found-base t)))))))
+	    (indent-line-to new-indent)))))))
+
+
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; new-simplegv-indent-line
 ;; Indents lines according to simplegv format
