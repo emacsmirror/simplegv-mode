@@ -1,3 +1,4 @@
+
 ;;; simplegv-mode.el --- editing mode of JLSCircuitTester files
 ;; 
 ;; Filename: simplegv-mode.el
@@ -231,9 +232,7 @@
 	;; auto-complete keyword list
 	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	(defvar simplegv-ac-keyword-list
-	  (append simplegv-keywords
-		  (append simplegv-constants
-			  (append simplegv-types simplegv-builtins)))
+	  (append simplegv-keywords simplegv-constants simplegv-types simplegv-builtins)
 	  "Complete list of keywords for auto-completion.")
 	
 	;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
